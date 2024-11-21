@@ -169,11 +169,11 @@ MEAN STACK  --> Mongo Express Angular Node.js
 
     // [The above command will run backend-container inside mean-stack-network with port number as 4000]
 
-    docker stop {container name (or) ID}
+    docker stop {container name (or) ID}     // command to stop the docker container
 
-    docker rm {container name (or) ID}
+    docker rm {container name (or) ID}      // command to remove the docker container
 
-    docker rmi {Image name (or) ID}
+    docker rmi {Image name (or) ID}         // command to remove the docker Image
 
     ```
     The problem with docker commands is it is difficult to pass environment from docker commands. we can do that but it increases the size of the command instead we can use `docker-compose.yml` which is a best practice.
