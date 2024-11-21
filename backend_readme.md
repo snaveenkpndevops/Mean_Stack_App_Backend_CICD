@@ -140,11 +140,24 @@ MEAN STACK  --> Mongo Express Angular Node.js
 
 ## Note:
 
-## Dockerize the backend appication:
+## Dockerize the backend application:
 
 ### Prerequisite:
 
     * make sure your docker-desktop application is running.
+
+    * In `index.js` for dockerize application 
+
+    ```
+    const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/myrestaurant_db";
+
+    // The process.env.MONGO_URL this value will be passed from docker-compose.yml file as a environmental variables.
+
+    const PORT = process.env.PORT || 4000;
+
+    // The process.env.PORT this value will be passed from docker-compose.yml file as a environmental variables.
+
+    ```
 
 
 1. Check Dockerfile -->  use .dockerignore (to ignore node_modules and other unwanted files copying from local to docker image)

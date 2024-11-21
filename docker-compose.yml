@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   backend:
-    image: restaurant-backend
+    image: restaurant-backend  
     container_name: backend # Custom container name
     ports:
       - "4000:4000"
@@ -13,6 +13,7 @@ services:
     networks:
       - mean-stack-network
 
+# The below code for running mongodb container (image will be taken from online)
   mongodb:
     image: mongo
     container_name: mongodb-container
