@@ -230,7 +230,7 @@ MEAN STACK  --> Mongo Express Angular Node.js
 2. minikube start   -->  Run this command to start minikube cluster.
 3. make sure to login docker in order to push the docker image to docker hub.
  
-    `docker commands`
+    `docker commands:`
 
     ```
     docker login        // login to dockerhub
