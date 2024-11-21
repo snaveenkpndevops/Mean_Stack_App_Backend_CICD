@@ -381,3 +381,10 @@ You can either use minikube cluster (or) Kind cluster.
 8. Paste `http://127.0.0.1:58819/api/restaurants` (or)  `http://127.0.0.1:58819/health`  in browser.
 
 9. Now If everything works fine then change the backend kubernetes service type to `ClusterIP`.
+
+
+### Images:
+
+![Backend Logo](./images/backend-minikube-check1.png)
+
+![Backend Logo](./images/backend-minikube-check2.png)
