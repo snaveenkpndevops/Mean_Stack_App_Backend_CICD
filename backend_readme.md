@@ -4,6 +4,8 @@ Reference from geeks for geeks : https://www.geeksforgeeks.org/restaurant-recomm
 
 MEAN STACK  --> Mongo Express Angular Node.js
 
+## Installation of node js packages and and code (Also Running the application in Local machine)
+
 1. mkdir backend
 2. cd backend
 
@@ -136,11 +138,11 @@ MEAN STACK  --> Mongo Express Angular Node.js
 
             ```
 
-### Note:
+## Note:
 
-### Dockerize the backend appication:
+## Dockerize the backend appication:
 
-Prerequisite:
+### Prerequisite:
 
     * make sure your docker-desktop application is running.
 
@@ -151,7 +153,7 @@ Prerequisite:
 
     ```
 
-    docker build -t restaurant-backend .      --> Docker command to build the backend docker image
+    docker build -t restaurant-backend .      // Docker command to build the backend docker image
 
     ```
 3. Once the docker image for backend is created. Now we are going to run the docker container from docker image. we can either use docker commands (or) docker compose yml file. 
@@ -161,11 +163,11 @@ Prerequisite:
     ```
     docker run -d  --name mongodb-container --network mean-stack-network  -p 27017:27017  -e MONGO_INITDB_ROOT_USERNAME=root  -e MONGO_INITDB_ROOT_PASSWORD=password  mongo
 
-    [The above command will run mongodb-container inside mean-stack-network with username as root and passowrd as password in 27017 port]
+    // [The above command will run mongodb-container inside mean-stack-network with username as root and passowrd as password in 27017 port]
         
     docker run -d --name backend --network mean-stack-network -p 4000:4000 restaurant-backend:latest
 
-    [The above command will run backend-container inside mean-stack-network with port number as 4000]
+    // [The above command will run backend-container inside mean-stack-network with port number as 4000]
 
     docker stop {container name (or) ID}
 
@@ -180,9 +182,9 @@ Prerequisite:
 
     ```
 
-    docker-compose up -d   -->   This command will run the docker-compose file and start the container.
+    docker-compose up -d   // This command will run the docker-compose file and start the container.
 
-    docker-compose down    -->  This command will stop the container.
+    docker-compose down    //  This command will stop the container.
 
     ```
 
