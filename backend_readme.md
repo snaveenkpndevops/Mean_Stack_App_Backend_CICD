@@ -295,6 +295,8 @@ You can either use minikube cluster (or) Kind cluster.
 
 
     ```
+    \\ backend.yaml
+
     apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -347,7 +349,7 @@ You can either use minikube cluster (or) Kind cluster.
 6. kubectl logs backend-6bb64c8b6-jrk2n -n restaurant
 
    ```
-     kubectl logs backend-6bb64c8b6-jrk2n -n restaurant
+    kubectl logs backend-6bb64c8b6-jrk2n -n restaurant
     Connected to MongoDB
     Server is running on port 4000
     Restaurant data seeded successfully!
