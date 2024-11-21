@@ -8,9 +8,18 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Connect to MongoDB
+// Connect to MongoDB (local machine)
 //const MONGO_URL = "mongodb://127.0.0.1:27017/myrestaurant_db";
-const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/myrestaurant_db";
+
+// For Docker Container use this
+//const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/myrestaurant_db";  
+
+// For Kubernetes service use this
+const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service:27017/restaurant_db";  
+
+// For Kubernetes service use this (If mongodb namespace is different)
+//const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service.mongodb-namespace.svc.cluster.local:27017/restaurant_db"; 
+
 
 //const MONGO_URL = "mongodb://root:password@localhost:27017/myrestaurant_db?authSource=admin";
 

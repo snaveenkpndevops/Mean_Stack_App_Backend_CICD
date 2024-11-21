@@ -220,3 +220,150 @@ MEAN STACK  --> Mongo Express Angular Node.js
 
 
 
+## Note:
+
+## Creating Kubernetes pods for the backend application:
+
+### Prerequisite for Testing:
+
+1. make sure your docker-desktop application is running.
+2. minikube start   -->  Run this command to start minikube cluster.
+
+You can either use minikube cluster (or) Kind cluster.
+
+3. minikube status
+4. kubectl get nodes
+
+5. In backend `index.js` file change the mongo url.
+
+    ```
+    // For Kubernetes service use this
+    const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service:27017/restaurant_db";  
+
+    // For Kubernetes service use this (If mongodb namespace is different)
+    //const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service.mongodb-namespace.svc.cluster.local:27017/restaurant_db"; 
+    ```
+
+6. Create kubernetes yaml for `mongo-db` and `backend` to be created in `restaurant` namespace.
+
+    ```
+    \\ mongo_db.yaml
+
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+    name: mongodb
+    namespace: restaurant
+    labels:
+        app: mongodb
+    spec:
+    replicas: 1
+    selector:
+        matchLabels:
+        app: mongodb
+    template:
+        metadata:
+        labels:
+            app: mongodb
+        spec:
+        containers:
+        - name: mongodb
+            image: mongo
+            ports:
+            - containerPort: 27017
+            env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+            value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+            value: password
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+    name: mongodb-service
+    namespace: restaurant
+    spec:
+    selector:
+        app: mongodb
+    ports:
+    - protocol: TCP
+        port: 27017
+        targetPort: 27017
+    type: ClusterIP
+
+    ```
+
+
+    ```
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+    name: backend
+    namespace: restaurant
+    spec:
+    replicas: 1
+    selector:
+        matchLabels:
+        app: backend
+    template:
+        metadata:
+        labels:
+            app: backend
+        spec:
+        containers:
+        - name: backend
+            image: snaveenkpn/restaurant-backend:1
+            ports:
+            - containerPort: 4000
+            env:
+            - name: MONGO_URL
+            value: mongodb://root:password@mongodb-service:27017/restaurant_db?authSource=admin
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+    name: backend-service
+    namespace: restaurant
+    spec:
+    selector:
+        app: backend
+    ports:
+    - protocol: TCP
+        port: 4000
+        targetPort: 4000
+    type: NodePort  #ClusterIP
+
+    ```
+
+7. For testing purpose we configured the backend service type as `NodePort`. Once we test that backend and mongodb is working as expected then change the backend service type as `ClusterIP`.
+
+### Checking the Kubernetes backend and MongoDB pods and services.
+
+1. kubectl create ns restaurant
+2. kubectl apply -f mongo_db.yaml
+3. kubectl get pods -n restaurant  -->  Check mongodb pod is running or not.
+4. kubectl apply -f backend.yaml
+5. kubectl get pods -n restaurant  -->  Check backend pod is running or not.
+6. kubectl logs backend-6bb64c8b6-jrk2n -n restaurant
+
+   ```
+     kubectl logs backend-6bb64c8b6-jrk2n -n restaurant
+    Connected to MongoDB
+    Server is running on port 4000
+    Restaurant data seeded successfully!
+
+   ```
+
+7. minikube service backend-service -n restaurant --url   -->  This will show the minikube url and port. Paste that in browser
+
+    ```
+    minikube service backend-service -n restaurant --url
+    W1121 23:08:41.847561   14352 main.go:291] Unable to resolve the current Docker CLI context "default": context "default": context not found: open C:\Users\Naveen\.docker\contexts\meta\37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f\meta.json: The system cannot find the path specified.
+    http://127.0.0.1:58819
+    ❗  Because you are using a Docker driver on windows, the terminal needs to be open to run it.
+
+    ```
+
+8. Paste `http://127.0.0.1:58819/api/restaurants` (or)  `http://127.0.0.1:58819/health`  in browser.
+
+9. Now If everything works fine then change the backend kubernetes service type to `ClusterIP`.
