@@ -228,6 +228,18 @@ MEAN STACK  --> Mongo Express Angular Node.js
 
 1. make sure your docker-desktop application is running.
 2. minikube start   -->  Run this command to start minikube cluster.
+3. make sure to login docker in order to push the docker image to docker hub.
+ 
+    `docker commands`
+
+    ```
+    docker login        // login to dockerhub
+
+    docker tag restaurant-backend:latest snaveenkpn/restaurant-backend:1    // tag your docker image in order to push the image to dockerhub
+
+    docker push snaveenkpn/restaurant-backend:1     // push tagged docker image to docker hub
+
+    ```
 
 You can either use minikube cluster (or) Kind cluster.
 
