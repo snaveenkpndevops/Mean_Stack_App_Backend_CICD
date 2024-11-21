@@ -387,4 +387,4 @@ You can either use minikube cluster (or) Kind cluster.
 
 ![Backend Logo](./images/backend-minikube-check1.png)
 
-![Backend Logo](./images/backend-minikube-check2.png)
+![Backend Logo](./images/Screenshot_1backend-minikube-check2.png)
