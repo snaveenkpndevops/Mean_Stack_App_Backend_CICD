@@ -412,7 +412,7 @@ For kubernetes deployment it is good to use minikube for testing. But the real p
         * helm install ingress-nginx ingress-nginx/ingress-nginx  --create-namespace --namespace ingress-basic --version 4.5.2     
         * helm repo update
         * kubectl create ns restaurant
-        * kubectl apply -f mongo_db.yaml -n restaurant
+        * kubectl apply -f e:\MyHandsonProjects\CICD_Projects\test1\Kubernetes\mongo_db.yaml -n restaurant
 
         ```
         \\ Mongo_db.yaml
@@ -461,11 +461,11 @@ For kubernetes deployment it is good to use minikube for testing. But the real p
 
         ```
 
-        * kubectl apply -f backend.yaml -n restaurant
+        * kubectl apply -f e:\MyHandsonProjects\CICD_Projects\test1\Kubernetes\backend.yaml -n restaurant
 
         ```
         \\ backend.yaml
-        
+
         apiVersion: apps/v1
         kind: Deployment
         metadata:
