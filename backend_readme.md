@@ -402,6 +402,8 @@ For kubernetes deployment it is good to use minikube for testing. But the real p
 4. Once Eks cluster and node group created.
 5. Open VS CODE terminal  -->  Execute the below commands.
 
+        ```
+
         * aws configure
         * aws eks update-kubeconfig --region ap-south-1 --name mean-stack-eks 
         * kubectl config current-context 
@@ -413,6 +415,8 @@ For kubernetes deployment it is good to use minikube for testing. But the real p
         * helm repo update
         * kubectl create ns restaurant
         * kubectl apply -f e:\MyHandsonProjects\CICD_Projects\test1\Kubernetes\mongo_db.yaml -n restaurant
+
+        ```
 
         ```
         \\ Mongo_db.yaml
