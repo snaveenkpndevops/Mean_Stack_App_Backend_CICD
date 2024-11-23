@@ -415,6 +415,8 @@ For kubernetes deployment it is good to use minikube for testing. But the real p
         * kubectl apply -f mongo_db.yaml -n restaurant
 
         ```
+        \\ Mongo_db.yaml
+
         apiVersion: apps/v1
         kind: Deployment
         metadata:
@@ -462,6 +464,8 @@ For kubernetes deployment it is good to use minikube for testing. But the real p
         * kubectl apply -f backend.yaml -n restaurant
 
         ```
+        \\ backend.yaml
+        
         apiVersion: apps/v1
         kind: Deployment
         metadata:
