@@ -12,7 +12,7 @@ app.use(cors());
 //const MONGO_URL = "mongodb://127.0.0.1:27017/myrestaurant_db";
 
 // For Docker Container use this
-//const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/myrestaurant_db";  
+//const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-container:27017/restaurant_db?authSource=admin";  
 
 // For Kubernetes service use this
 const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service:27017/restaurant_db";  

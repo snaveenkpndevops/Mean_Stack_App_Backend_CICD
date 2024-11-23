@@ -256,7 +256,7 @@ You can either use minikube cluster (or) Kind cluster.
     //const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service.mongodb-namespace.svc.cluster.local:27017/restaurant_db"; 
     ```
 
-6. Create kubernetes yaml for `mongo-db` and `backend` to be created in `restaurant` namespace.
+6. Create kubernetes yaml for `mongo-db` and `backend` to be created in `restaurant` namespace. we are passing `MongoURL` from `backend.yaml` file.
 
     ```
     \\ mongo_db.yaml
@@ -388,3 +388,148 @@ You can either use minikube cluster (or) Kind cluster.
 ![Backend Logo](./images/backend-minikube-check1.png)
 
 ![Backend Logo](./images/Screenshot_1backend-minikube-check2.png)
+
+
+### Note:
+
+For kubernetes deployment it is good to use minikube for testing. But the real problem is we will face connection issue  between frontend and backend. Eventhough we pass the backend url correctly to frontend code it still will not connect. So to avoid this problem we need to create a ingress for frontend and backend and then in frontend code we pass the `backend ingress host along with path URL as a api url.` Now both frontend and backend will get connected.
+
+## Steps to deploy our code in eks/aks cluster:
+
+1. Create a Eks Public Cluster.
+2. Create a Node Group with spot instance inorder to reduce eks cost.
+3. SG --> Allow All Traffic
+4. Once Eks cluster and node group created.
+5. Open VS CODE terminal  -->  Execute the below commands.
+
+        * aws configure
+        * aws eks update-kubeconfig --region ap-south-1 --name mean-stack-eks 
+        * kubectl config current-context 
+        * helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        * helm repo update
+        * helm repo add jetstack https://charts.jetstack.io
+        * helm repo update
+        * helm install ingress-nginx ingress-nginx/ingress-nginx  --create-namespace --namespace ingress-basic --version 4.5.2     
+        * helm repo update
+        * kubectl create ns restaurant
+        * kubectl apply -f mongo_db.yaml -n restaurant
+
+        ```
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+        name: mongodb
+        namespace: restaurant
+        labels:
+            app: mongodb
+        spec:
+        replicas: 1
+        selector:
+            matchLabels:
+            app: mongodb
+        template:
+            metadata:
+            labels:
+                app: mongodb
+            spec:
+            containers:
+            - name: mongodb
+                image: mongo
+                ports:
+                - containerPort: 27017
+                env:
+                - name: MONGO_INITDB_ROOT_USERNAME
+                value: root
+                - name: MONGO_INITDB_ROOT_PASSWORD
+                value: password
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+        name: mongodb-service
+        namespace: restaurant
+        spec:
+        selector:
+            app: mongodb
+        ports:
+        - protocol: TCP
+            port: 27017
+            targetPort: 27017
+        type: ClusterIP
+
+        ```
+
+        * kubectl apply -f backend.yaml -n restaurant
+
+        ```
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+        name: backend
+        namespace: restaurant
+        spec:
+        replicas: 1
+        selector:
+            matchLabels:
+            app: backend
+        template:
+            metadata:
+            labels:
+                app: backend
+            spec:
+            containers:
+            - name: backend
+                image: snaveenkpn/restaurant-backend:1
+                ports:
+                - containerPort: 4000
+                env:
+                - name: MONGO_URL
+                value: mongodb://root:password@mongodb-service:27017/myrestaurant_db?authSource=admin
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+        name: backend-service
+        namespace: restaurant
+        spec:
+        selector:
+            app: backend
+        ports:
+        - protocol: TCP
+            port: 4000
+            targetPort: 4000
+        type: ClusterIP
+
+
+        ```
+
+6. FYR: `index.js` backend file. 
+
+    ```
+    //index.js
+
+    app.use(express.json());
+    app.use(cors());
+
+    // For Docker Container use this
+    //const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-container:27017/restaurant_db?authSource=admin";  
+
+    // For Kubernetes service use this
+    const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service:27017/restaurant_db";  
+
+    // For Kubernetes service use this (If mongodb namespace is different)
+    //const MONGO_URL = process.env.MONGO_URL || "mongodb://root:password@mongodb-service.mongodb-namespace.svc.cluster.local:27017/restaurant_db"; 
+
+    .
+    .
+    .
+    .
+    .
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+
+    ```
+
+7. Backend deployment is almost done. Now we need to create frontend and ingress. Then in ingress we need to create a routing for backend service. Check frontend Readme.md for further process.  `Frontend Repo URL : https://github.com/snaveenkpndevops/MEAN_Stack_Restaurant_App_Frontend`
