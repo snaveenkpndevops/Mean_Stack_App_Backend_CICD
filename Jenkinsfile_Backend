@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = "${env.docker_registry}"
+        IMAGE_NAME = 'restaurant-backend'    
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // Checkout the code from your repository
+                git branch: 'main', credentialsId: '3d128c05-7ca7-4fc1-af3d-7addda3106b5', url: 'https://github.com/snaveenkpndevops/Mean_Stack_App_Backend_CICD.git'
+            }
+        }
+
+
+        stage('Get Git Information') {
+            steps {
+                script {
+                    // Retrieve the current commit hash and branch name
+                    env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    env.GIT_BRANCH = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    
+                    // Sanitize the branch name to remove invalid characters
+                    env.SAFE_BRANCH = env.GIT_BRANCH.replaceAll('/', '-')
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    def tag = "${env.SAFE_BRANCH}-${env.GIT_COMMIT}"
+                    sh "docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${tag} ."
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    // Login to Docker Hub (or your private registry)
+                    withCredentials([usernamePassword(credentialsId: '6bd67041-72c9-4b57-a182-815691c94aac', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Push the Docker image to the registry
+                    def tag = "${env.SAFE_BRANCH}-${env.GIT_COMMIT}"
+                    sh "docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${tag}"
+                }
+            }
+        }
+    }
+}
