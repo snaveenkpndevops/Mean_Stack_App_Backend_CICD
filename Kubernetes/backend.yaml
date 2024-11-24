@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: snaveenkpn/restaurant-backend:1
+        image: snaveenkpn/restaurant-backend:<initial-version> # Only this tag will change
         ports:
         - containerPort: 4000
         env:

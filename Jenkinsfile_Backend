@@ -58,5 +58,33 @@ pipeline {
                 }
             }
         }
+
+        stage('Update Kubernetes YAML') {
+            steps {
+                script {
+                    sh '''
+                    #!/bin/bash
+
+                    # Variables
+                    NEW_TAG="${SAFE_BRANCH}-${GIT_COMMIT}"
+                    DEPLOYMENT_FILE="./kubernetes/backend.yaml" # Path to the backend.yaml file
+
+                    # Check if backend.yaml exists
+                    if [ ! -f "$DEPLOYMENT_FILE" ]; then
+                    echo "Error: $DEPLOYMENT_FILE not found!"
+                    exit 1
+                    fi
+
+                    # Update the version (tag) in the Kubernetes YAML
+                    sed -i.bak "s|\\(image: .*/restaurant-backend:\\).*|\\1${NEW_TAG}|g" $DEPLOYMENT_FILE
+
+                    # Show the updated file for verification
+                    echo "Updated $DEPLOYMENT_FILE:"
+                    cat $DEPLOYMENT_FILE
+                    '''
+                }
+            }
+        }
+
     }
 }
