@@ -1,0 +1,33 @@
+stages:
+  - build_push
+  - update_manifest
+
+variables:
+  IMAGE_NAME: "${DOCKER_REGISTRY}/${DOCKER_USERNAME}/restaurant-backend"  # Custom image name
+  TAG: "${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_IID}"  # Combine branch name and pipeline ID
+
+# Stage 1: Build and Push Docker Image
+build-and-tag-image:
+  stage: build_push
+  image: docker:latest
+  services:
+    - docker:dind  # Docker-in-Docker service
+  script:
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+    - docker build -t "$IMAGE_NAME:$TAG" .  # Build the Docker image
+    - docker push "$IMAGE_NAME:$TAG"  # Push the image to the registry
+  only:
+    - main
+
+update-kubernetes-manifest:
+  stage: update_manifest
+  image: busybox:latest  # Using a light-weight image for simple file manipulation
+  script:
+    - echo "Updating Kubernetes backend manifest with new image tag..."
+    - 'sed -i "s|image: .*/restaurant-backend:.*|image: ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/restaurant-backend:${TAG}|" Kubernetes/backend.yaml'
+    - cat Kubernetes/backend.yaml  # Optional: Print the updated Kubernetes manifest for verification
+    #- kubectl apply -f Kubernetes/backend.yaml  # Apply the updated manifest to Kubernetes
+  only:
+    - main
+  dependencies:
+    - build-and-tag-image  # Ensure this job runs after build-and-tag-image
